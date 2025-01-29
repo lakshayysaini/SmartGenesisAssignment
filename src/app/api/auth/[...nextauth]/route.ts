@@ -33,7 +33,6 @@ export const authOptions: AuthOptions = {
       return true;
     },
     async session({ session, token }) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (session.user as any).id = token.sub;
       return session;
     },
