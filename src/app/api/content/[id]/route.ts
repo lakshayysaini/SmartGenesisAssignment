@@ -1,11 +1,10 @@
-// app/api/content/[id]/route.ts
 import { NextResponse } from "next/server";
 import { connectToDB } from "@/lib/db";
 import Content from "@/models/Content";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../utils/AuthOptions";
 
-//PUT api to update the cointent via id
+// PUT api to update the content via id
 export async function PUT(
   req: Request,
   { params }: { params: { id: string } }
@@ -38,8 +37,7 @@ export async function PUT(
   }
 }
 
-
-//DELETE api to delete the specific content via id
+// DELETE api to delete the specific content via id
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
