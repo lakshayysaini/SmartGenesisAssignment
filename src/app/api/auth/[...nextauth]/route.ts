@@ -2,11 +2,11 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { connectToDB } from "@/lib/db";
 import User from "@/models/User";
-import { NextAuthOptions } from "next-auth";
+import { AuthOptions } from "next-auth";
 
 export const dynamic = "force-dynamic";
 
-const authOptions: NextAuthOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID || "",
@@ -19,8 +19,7 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user }) {
       await connectToDB();
-
-      // Check if the user exists in the database, create if not
+      //after connection to database we're checking is the user is nt an existing user we'll create a new one otherwise just return the existing user.
       const existingUser = await User.findOne({ email: user.email });
       if (!existingUser) {
         await User.create({
@@ -41,5 +40,4 @@ const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions);
 
-// Exporting the NextAuth handler for GET and POST methods
 export { handler as GET, handler as POST };
