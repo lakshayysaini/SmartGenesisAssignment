@@ -1,12 +1,20 @@
 "use client";
-import { useSession } from "next-auth/react";
+
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useSession } from "next-auth/react";
+import { ErrorPage } from "@/components/ErrorPage";
 import "react-quill/dist/quill.snow.css";
+import { PenLine, Trash2, Save } from "lucide-react";
+import "../globals.css";
 
 const QuillWrapper = dynamic(() => import("react-quill-new"), {
   ssr: false,
-  loading: () => <p>Loading editor...</p>,
+  loading: () => (
+    <div className="animate-pulse">
+      <div className="h-48 bg-gray-200 rounded-md"></div>
+    </div>
+  ),
 });
 
 interface Content {
@@ -51,17 +59,17 @@ const formats = [
 ];
 
 export default function Editor() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [contents, setContents] = useState<Content[]>([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-    fetchContents();
-  }, []);
+    if (status === "authenticated") {
+      fetchContents();
+    }
+  }, [status]);
 
   const fetchContents = async () => {
     const response = await fetch("/api/content");
@@ -72,19 +80,14 @@ export default function Editor() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (editingId) {
-      await fetch(`/api/content/${editingId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content }),
-      });
-    } else {
-      await fetch("/api/content", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content }),
-      });
-    }
+    const method = editingId ? "PUT" : "POST";
+    const url = editingId ? `/api/content/${editingId}` : "/api/content";
+
+    await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, content }),
+    });
 
     setTitle("");
     setContent("");
@@ -105,66 +108,88 @@ export default function Editor() {
     fetchContents();
   };
 
-  if (!isClient) {
-    return null;
-  }
+  if (status === "loading") return null;
+  if (status !== "authenticated") return <ErrorPage />;
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
-      <form onSubmit={handleSubmit} className="mb-8">
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter title"
-          className="w-full mb-4 p-2 border rounded"
-          required
-        />
-        <div className="mb-4 bg-white">
-          <QuillWrapper
-            modules={modules}
-            formats={formats}
-            theme="snow"
-            value={content}
-            onChange={setContent}
-            placeholder="Write your content here..."
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-        >
-          {editingId ? "Update" : "Create"} Content
-        </button>
-      </form>
-
-      <div className="space-y-4">
-        {contents.map((content) => (
-          <div
-            key={content._id}
-            className="border p-4 rounded bg-white shadow-sm"
-          >
-            <h2 className="text-xl font-bold">{content.title}</h2>
-            <div
-              dangerouslySetInnerHTML={{ __html: content.content }}
-              className="mt-2 prose max-w-none"
-            />
-            <div className="mt-4 space-x-2">
-              <button
-                onClick={() => handleEdit(content)}
-                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition-colors"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(content._id)}
-                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
-              >
-                Delete
-              </button>
+    <div className="min-h-screen bg-[#121212]">
+      <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="bg-[#1E1E1E] rounded-lg shadow-xl p-8 mb-8 border border-[#2A2A2A]">
+          <h1 className="text-3xl font-semibold text-white mb-8">
+            Content Editor
+          </h1>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter a captivating title..."
+                className="w-full px-4 py-3 text-lg bg-[#2A2A2A] border-[#3A3A3A] 
+                          text-white rounded-lg focus:ring-2 focus:ring-blue-500 
+                          focus:border-transparent transition-all duration-200 
+                          placeholder-gray-500"
+                required
+              />
             </div>
-          </div>
-        ))}
+            <div className="bg-white">
+              <QuillWrapper
+                modules={modules}
+                formats={formats}
+                value={content}
+                onChange={setContent}
+                placeholder="Write your content here..."
+                />
+            </div>
+            <button
+              type="submit"
+              className="inline-flex items-center px-6 py-3 text-base font-medium 
+                        text-white bg-blue-600 hover:bg-blue-700 rounded-lg 
+                        transition-all duration-200"
+            >
+              <Save className="w-5 h-5 mr-2" />
+              {editingId ? "Update" : "Create"} Content
+            </button>
+          </form>
+        </div>
+
+        <div className="space-y-6">
+          {contents?.map((content) => (
+            <div
+              key={content._id}
+              className="bg-[#1E1E1E] rounded-lg shadow-xl p-8 border border-[#2A2A2A]
+                        transition-all duration-200 hover:border-blue-500"
+            >
+              <h2 className="text-2xl font-bold text-white mb-4">
+                {content.title}
+              </h2>
+              <div
+                dangerouslySetInnerHTML={{ __html: content.content }}
+                className="prose prose-invert max-w-none mb-6"
+              />
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => handleEdit(content)}
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium 
+                            text-white bg-amber-600 hover:bg-amber-700 rounded-lg 
+                            transition-all duration-200"
+                >
+                  <PenLine className="w-4 h-4 mr-2" />
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(content._id)}
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium 
+                            text-white bg-red-600 hover:bg-red-700 rounded-lg 
+                            transition-all duration-200"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
