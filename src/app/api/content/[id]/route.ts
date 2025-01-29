@@ -7,7 +7,7 @@ import { authOptions } from "../../../../utils/AuthOptions";
 // PUT api to update the content via id
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -17,9 +17,10 @@ export async function PUT(
 
     const { title, content } = await req.json();
     await connectToDB();
+    const { id } = await params;
 
     const updatedContent = await Content.findOneAndUpdate(
-      { _id: params.id, userId: (session.user as any).id },
+      { _id: id, userId: (session.user as any).id },
       { title, content, updatedAt: Date.now() },
       { new: true }
     );
@@ -40,7 +41,7 @@ export async function PUT(
 // DELETE api to delete the specific content via id
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -49,8 +50,10 @@ export async function DELETE(
     }
 
     await connectToDB();
+    const { id } = await params;
+
     const deletedContent = await Content.findOneAndDelete({
-      _id: params.id,
+      _id: id,
       userId: (session.user as any).id,
     });
 
