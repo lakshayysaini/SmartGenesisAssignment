@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Genesis Assignemnt
 
-## Getting Started
+This project is basically a web application in which there is google authentication using next auth and simple CRUD operations of content in a Rich Text Editor (react-quill). Also I'm using mongo db for database and storing the collections - user and content.
 
-First, run the development server:
+# Files and Folder
+The files and folder structure is not very complicated because this is an next js application -
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. There is a main src directory in which app folder is there containig all routes.
+2. Inside the app folder there is a folder for auth in which handler is implmented by creatino of auth options.
+3. Then there is a content folder in which contains API endpoints for managing the content - dynamic routing is there for updation and deletion of  specific content via id's
+4. There is a editor folder which is a /editor route in which we are doing our CRUD operation of content from a rich text editor.
+5. Component folder contains a error page component and Navbar component for easily signing in and signing out.
+6. There is also a lib folder inside the src directory which has a file responsible for database connection.
+7. models folders in the src contains the User and Contentt schema.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### To run this application locally, you'll need to have - 
+1. GOOGLE ID and GOOGLE SECRET for Oauth.
+2. MONGODB_URI - this is a connection string to connect your cluster with the database.
+3. NEXTAUTH_URL can be http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+#### Here are the steps to run this repository if you have the above keys -
 
-To learn more about Next.js, take a look at the following resources:
+1. Down the .zip or clone this repository.
+2. Navigate to the project directory.
+3. Install dependencies: `npm install`
+4. Make an .env file in the root directory with keys as MONGODB_URI, GOOGLE_ID, GOOGLE_SECRET and NEXTAUTH_URL and the values would be their respective keys
+5. Run the development server: `npm run dev`
+6. Open your browser and navigate to `http://localhost:3000` to view the application :)
+## Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Contributions are welcome!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ For major changes or bugs or have suggestions for improvement, please open an issue first to discuss what you would like to change.

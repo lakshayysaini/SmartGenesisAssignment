@@ -4,6 +4,8 @@ import Content from "@/models/Content";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 
+
+//POST request to create a new content and save it in database.
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -29,6 +31,8 @@ export async function POST(req: Request) {
   }
 }
 
+
+//GET request to fetch all the content of a specific user
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
