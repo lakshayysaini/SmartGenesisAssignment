@@ -41,7 +41,7 @@ export default function Home() {
                 Ready to Edit
               </h2>
               <p className="text-gray-400 mb-6">
-                You're signed in and ready to start editing your content.
+                You&apos;re signed in and ready to start editing your content.
               </p>
               <a
                 href="/editor"
