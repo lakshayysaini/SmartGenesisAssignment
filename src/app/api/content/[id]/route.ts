@@ -5,6 +5,8 @@ import Content from "@/models/Content";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
+
+//PUT api to update the cointent via id
 export async function PUT(
   req: Request,
   { params }: { params: { id: string } }
@@ -37,6 +39,8 @@ export async function PUT(
   }
 }
 
+
+//DELETE api to delete the specific content via id
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }

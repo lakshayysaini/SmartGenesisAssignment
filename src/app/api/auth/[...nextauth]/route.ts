@@ -20,6 +20,7 @@ export const authOptions: AuthOptions = {
     async signIn({ user }) {
       await connectToDB();
 
+      //after connection to database we're checking is the user is nt an existing user we'll create a new one otherwise just return the existing user.
       const existingUser = await User.findOne({ email: user.email });
       if (!existingUser) {
         await User.create({
