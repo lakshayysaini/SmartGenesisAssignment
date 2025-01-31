@@ -1,4 +1,4 @@
-# Smart Genesis Assignemnt
+# Smart Genesis Frontend Assignemnt
 
 This project is basically a web application in which there is google authentication using next auth and simple CRUD operations of content in a Rich Text Editor (react-quill). Also I'm using mongo db for database and storing the collections - user and content.
 
